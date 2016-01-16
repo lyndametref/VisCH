@@ -5,7 +5,7 @@ date: "16 January 2016"
 output: html_document
 ---
 
-Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods`. Data are in french. Remove comment at end of sheet. Convert to tdl for easier wrangling with dplyr.
+Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods`. Remove comments at end of sheet.
 
 ```{r}
 library(readODS)
@@ -14,7 +14,7 @@ library(tidyr)
 library(XML)
 
 
-#download.file("http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods","canton-ind.ods")
+#download.file("http://www.bfs.admin.ch/xmlns/opendata/je-e-21.03.02.ods","canton-ind.ods")
 dataStr <- read.ods(file = "canton-ind.ods", sheet = 1)
 comments <- dataStr[89:nrow(dataStr),1]
 dataStr <- dataStr[1:86,]
@@ -29,16 +29,12 @@ dataStr=as.data.frame(t(dataStr),stringsAsFactors = FALSE)
 
 Canton names have not been imported by read.ods for some reason... Need to be automatised somehow...
 ```{r}
-dataStr <- cbind(c("","Années","Suisse",'ZH','BE','LU','UR','SZ','OW','NW','GL','ZG','FR','SO','BS','BL','SH','AR','AI','SG','GR','AG','TG','TI','VD','VS','NE','GE','JU'),dataStr)
+dataStr <- cbind(c("","Années","Suisse",'CH-ZH','CH-BE','CH-LU','CH-UR','CH-SZ','CH-OW','CH-NW','CH-GL','CH-ZG','CH-FR','CH-SO','CH-BS','CH-BL','CH-SH','CH-AR','CH-AI','CH-SG','CH-GR','CH-AG','CH-TG','CH-TI','CH-VD','CH-VS','CH-NE','CH-GE','CH-JU'),dataStr)
 ```
-
-# Trying to extract canton names since they have not been imported by readODS
-# unzip("canton-ind.ods", files= "content.xml")
-# Extract XML element table:table-row table:style-name="ro1" which is the row containing the information
 
 Lots of wrangling to do: 
 
--remove unused year
+- remove unused year
 ```{r}
 dataStr <- dataStr[-2,]
 ```
@@ -68,15 +64,19 @@ dataNum <- mapply(gsub,"[\\'|\\(|\\)|X|\\*]","",dataStr)
 dataNum<-as.data.frame(apply(dataNum,2,as.numeric))
 colnames(dataNum) <- colnames(dataStr)
 rownames(dataNum) <- rownames(dataStr)
-
-
 ```
 
-- Extract population data
+- Extract population data first column must be the location for the gvis map
+- multiply resitdent to have the right number
+- beautifuling a bit the titles
 ```{r}
-population <- dataNum[2:7]
+population <- dataNum[c(2,3,4,7)]
 populationCH <- population[1,]
 population <- population[-1,]
+population <- cbind(canton=rownames(population),population)
+population[,2] <- population[,"Residents in 1000"]*1000
+colnames(population) <- c("canton","Residents in the canton","Residents per km^2","Change in % between 2010 and 2012","Foreign nationals in %")
+
 save(population,populationCH,file="population.rda")
 ```
 

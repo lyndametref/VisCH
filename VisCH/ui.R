@@ -6,25 +6,26 @@
 #
 
 library(shiny)
+load("population.rda")
 
 shinyUI(fluidPage(
 
-  # Application title
-  titlePanel("Old Faithful Geyser Data"),
+    # Application title
+    titlePanel("Some population data for Switzerland"),
 
-  # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      sliderInput("bins",
-                  "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
-    ),
-
-    # Show a plot of the generated distribution
-    mainPanel(
-      plotOutput("distPlot")
+    # Sidebar with a choice of dispplayed info
+    tabsetPanel(tabPanel("Data",
+                         sidebarLayout(
+                             sidebarPanel(
+                                 selectInput("statToDiplay",
+                                             "Which statistic do you want to display?" ,
+                                             colnames(population[,-1]),
+                                             selected = 1)
+                             ),
+                             # Show a plot of the generated distribution
+                             mainPanel(htmlOutput("mapPlot"))
+                         )),
+                tabPanel("Documentation on dataset and preprocessing",
+                         includeHTML("Documentation.html"))
     )
-  )
 ))
