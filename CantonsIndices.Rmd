@@ -5,7 +5,7 @@ date: "16 January 2016"
 output: html_document
 ---
 
-Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods`. Remove comments at end of sheet.
+Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-e-21.03.02.ods`. Remove comments at end of sheet.
 
 ```{r,message=FALSE}
 library(readODS)
@@ -17,7 +17,6 @@ dataStr <- read.ods(file = "canton-ind.ods", sheet = 1)
 comments <- dataStr[89:nrow(dataStr),1]
 dataStr <- dataStr[1:86,]
 ```
-
 
 - transpose: each canton is a row because each canton is an observation and the indcies are the values.
 ```{r}

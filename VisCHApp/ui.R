@@ -20,7 +20,12 @@ shinyUI(fluidPage(
                                  selectInput("statToDiplay",
                                              "Which statistic do you want to display?" ,
                                              colnames(population[,-1]),
-                                             selected = 1)
+                                             selected = 1),
+                                 p("Obtained from the swiss Federal Statistical Office"),
+                                 p("Data collected between 2010 and 2012, for more information check source file in documentation."),
+                                 p("Application provided as is and without warranty."),
+                                 p("Code available at GitHub: ", a("https://github.com/lyndametref/VisCH")),
+                                 p(em("Copyright Lynda Metref 2016, under GPL-v3 licence"))
                              ),
                              # Show a plot of the generated distribution
                              mainPanel(htmlOutput("mapPlot"))
