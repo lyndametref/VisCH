@@ -1,0 +1,84 @@
+---
+title: "A few swiss indices by cantons"
+author: "Lynda Metref"
+date: "16 January 2016"
+output: html_document
+---
+
+Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods`. Data are in french. Remove comment at end of sheet. Convert to tdl for easier wrangling with dplyr.
+
+```{r}
+library(readODS)
+library(dplyr)
+library(tidyr)
+library(XML)
+
+
+#download.file("http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods","canton-ind.ods")
+dataStr <- read.ods(file = "canton-ind.ods", sheet = 1)
+comments <- dataStr[89:nrow(dataStr),1]
+dataStr <- dataStr[1:86,]
+```
+
+
+- transpose: each canton is a row because each canton is an observation and the indcies are the values.
+```{r}
+dataStr=as.data.frame(t(dataStr),stringsAsFactors = FALSE)
+```
+
+
+Canton names have not been imported by read.ods for some reason... Need to be automatised somehow...
+```{r}
+dataStr <- cbind(c("","Années","Suisse",'ZH','BE','LU','UR','SZ','OW','NW','GL','ZG','FR','SO','BS','BL','SH','AR','AI','SG','GR','AG','TG','TI','VD','VS','NE','GE','JU'),dataStr)
+```
+
+# Trying to extract canton names since they have not been imported by readODS
+# unzip("canton-ind.ods", files= "content.xml")
+# Extract XML element table:table-row table:style-name="ro1" which is the row containing the information
+
+Lots of wrangling to do: 
+
+-remove unused year
+```{r}
+dataStr <- dataStr[-2,]
+```
+
+
+- remove first row and rename colums with it
+```{r}
+colnames(dataStr) <- dataStr[1,]
+dataStr <- dataStr[-1,]
+```
+
+- remove first column and rename rows with it
+```{r}
+rownames(dataStr) <- dataStr[,1]
+dataStr <- dataStr[,-1]
+```
+
+- removing all blank lines (when first cell is blank the whole line is)
+```{r}
+dataStr <- select(dataStr,-matches("^[[:punct:][[:digit:]]+"))
+dataStr <- dataStr[,-12]
+```
+
+- remove parenthesis and convert string to numeric
+```{r}
+dataNum <- mapply(gsub,"[\\'|\\(|\\)|X|\\*]","",dataStr)
+dataNum<-as.data.frame(apply(dataNum,2,as.numeric))
+colnames(dataNum) <- colnames(dataStr)
+rownames(dataNum) <- rownames(dataStr)
+
+
+```
+
+- Extract population data
+```{r}
+population <- dataNum[2:7]
+populationCH <- population[1,]
+population <- population[-1,]
+save(population,populationCH,file="population.rda")
+```
+
+
+
