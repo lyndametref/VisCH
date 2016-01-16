@@ -7,14 +7,12 @@ output: html_document
 
 Downloading data from bfs website at `http://www.bfs.admin.ch/xmlns/opendata/je-f-21.03.02.ods`. Remove comments at end of sheet.
 
-```{r}
+```{r,message=FALSE}
 library(readODS)
 library(dplyr)
-library(tidyr)
-library(XML)
 
 
-#download.file("http://www.bfs.admin.ch/xmlns/opendata/je-e-21.03.02.ods","canton-ind.ods")
+download.file("http://www.bfs.admin.ch/xmlns/opendata/je-e-21.03.02.ods","canton-ind.ods")
 dataStr <- read.ods(file = "canton-ind.ods", sheet = 1)
 comments <- dataStr[89:nrow(dataStr),1]
 dataStr <- dataStr[1:86,]
