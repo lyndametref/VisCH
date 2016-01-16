@@ -1,5 +1,5 @@
 # VisCH: an exercise for myself on GoogleVis in Shiny (R)
-##### *Copyright Lynda Metref 2016, under GPL-v3 licence*
+##### *Copyright 2016 Lynda Metref, under GPL-v3 licence*
 
 This little app gets data from www.bfs.admin.ch on swiss population between 2010 and 2012 and displays it using GoogleVis. This is a personal exercise and is by no mean a pertinent support for analysis nor warranted to be accurate.
 

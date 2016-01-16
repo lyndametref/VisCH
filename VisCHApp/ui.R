@@ -25,7 +25,7 @@ shinyUI(fluidPage(
                                  p("Data collected between 2010 and 2012, for more information check source file in documentation."),
                                  p("Application provided as is and without warranty."),
                                  p("Code available at GitHub: ", a("https://github.com/lyndametref/VisCH")),
-                                 p(em("Copyright Lynda Metref 2016, under GPL-v3 licence"))
+                                 p(em("Copyright 2016 Lynda Metref, under GPL-v3 licence"))
                              ),
                              # Show a plot of the generated distribution
                              mainPanel(htmlOutput("mapPlot"))
